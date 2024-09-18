@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { rateLimit } = require("express-rate-limit");
 const { LoggerConfig } = require("./config");
+const apiRoutes = require("./routes");
 
 // Creating an Express app instance
 const app = express();
@@ -31,6 +32,8 @@ app.use(
 app.get("/", (req, res) => {
     res.send("Server is Up and Running Smoothly!");
 });
+
+app.use("/api", apiRoutes);
 
 // Exporting the express app instance
 module.exports = app;
