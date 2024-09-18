@@ -1,14 +1,20 @@
 const { UserRepository } = require("../repositories");
 const AppError = require("../utils/error/app-error");
 const { StatusCodes } = require("http-status-codes");
-const { GenerateVerificationCode, Mailer } = require("../utils/common");
-const { VerificationMail } = require("../templates");
+const {
+    GenerateVerificationCode,
+    Mailer,
+    GenerateJWTToken,
+} = require("../utils/common");
+const { VerificationMail, SuccessMail } = require("../templates");
 
 const userRepository = new UserRepository();
 
 async function createUser(data) {
     try {
-        const existingUser = await userRepository.findOne(data);
+        const existingUser = await userRepository.findOne({
+            email: data.email,
+        });
         if (existingUser) {
             throw new AppError("User already exists", StatusCodes.BAD_REQUEST);
         }
@@ -38,6 +44,10 @@ async function createUser(data) {
         return user;
     } catch (error) {
         console.log(error);
+        if (error.statusCode === StatusCodes.BAD_REQUEST) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
         throw new AppError(
             "Error creating user.",
             StatusCodes.INTERNAL_SERVER_ERROR
@@ -45,6 +55,72 @@ async function createUser(data) {
     }
 }
 
+async function verifyEmail(data) {
+    try {
+        const user = await userRepository.findOne({ email: data.email });
+        if (!user) {
+            throw new AppError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        if (user.isVerified === true) {
+            throw new AppError(
+                "User is already verified",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        if (data.otp != user.verificationCode) {
+            throw new AppError("Invalid otp", StatusCodes.BAD_REQUEST);
+        }
+
+        if (user.verificationCodeExpiresAt <= Date.now()) {
+            throw new AppError("Otp expires", StatusCodes.BAD_REQUEST);
+        }
+
+        const payload = {
+            id: user._id,
+        };
+        const jwtToken = GenerateJWTToken(payload);
+
+        user.lastLogin = Date.now();
+        user.isVerified = true;
+        user.verificationCode = undefined;
+        user.verificationCodeExpiresAt = undefined;
+
+        await user.save();
+
+        const response = await Mailer.sendMail({
+            receiverInfo: data.email,
+            subject:
+                "Welcome Aboard! Your Account Has Been Successfully Created",
+            body: SuccessMail(),
+        });
+        if (!response) {
+            throw new AppError(
+                "Can't send welcome mail",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        return { user, jwtToken };
+    } catch (error) {
+        console.log(error);
+        if (error.statusCode === StatusCodes.BAD_REQUEST) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        if (error.statusCode === StatusCodes.NOT_FOUND) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        throw new AppError(
+            "Error Verifying User Email",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 module.exports = {
     createUser,
+    verifyEmail,
 };

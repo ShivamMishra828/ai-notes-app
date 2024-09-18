@@ -17,6 +17,18 @@ const userSchemaValidator = z.object({
         ),
 });
 
+const verifyUserValidation = z.object({
+    email: z
+        .string()
+        .email("Invalid email address")
+        .min(1, { message: "Email is required" }),
+    otp: z
+        .string()
+        .length(6, "OTP must be 6 digits")
+        .regex(/^[0-9]+$/, "OTP must contain only numbers"),
+});
+
 module.exports = {
     userSchemaValidator,
+    verifyUserValidation,
 };
