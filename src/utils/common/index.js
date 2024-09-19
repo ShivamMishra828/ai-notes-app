@@ -5,4 +5,5 @@ module.exports = {
     GenerateVerificationCode: require("./generate-verification-code"),
     Mailer: require("./mail-sender"),
     GenerateJWTToken: require("./generate-jwt-token"),
+    Auth: require("./auth"),
 };

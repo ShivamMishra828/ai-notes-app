@@ -107,8 +107,27 @@ async function loginUser(req, res) {
     }
 }
 
+async function logoutUser(req, res) {
+    try {
+        return res
+            .clearCookie("token")
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse({}, "User logged out successfully"));
+    } catch (error) {
+        return res
+            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(
+                new ErrorResponse(
+                    error,
+                    "Something went wrong while logging out the user"
+                )
+            );
+    }
+}
+
 module.exports = {
     createUser,
     verifyEmail,
     loginUser,
+    logoutUser,
 };
