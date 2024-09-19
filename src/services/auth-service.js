@@ -104,7 +104,6 @@ async function verifyEmail(data) {
 
         return { user, jwtToken };
     } catch (error) {
-        console.log(error);
         if (error.statusCode === StatusCodes.BAD_REQUEST) {
             throw new AppError(error.explanation, error.statusCode);
         }
@@ -120,7 +119,48 @@ async function verifyEmail(data) {
     }
 }
 
+async function loginUser(data) {
+    try {
+        const user = await userRepository.getUserWithPassword(data.email);
+        if (!user) {
+            throw new AppError(
+                "User not exists, signup first",
+                StatusCodes.NOT_FOUND
+            );
+        }
+
+        const isPasswordCorrect = await user.checkPassword(data.password);
+        if (!isPasswordCorrect) {
+            throw new AppError("Invalid Credentials", StatusCodes.BAD_REQUEST);
+        }
+
+        const payload = {
+            id: user._id,
+        };
+        const jwtToken = GenerateJWTToken(payload);
+
+        user.lastLogin = Date.now();
+        await user.save();
+
+        return { user, jwtToken };
+    } catch (error) {
+        if (error.statusCode === StatusCodes.BAD_REQUEST) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        if (error.statusCode === StatusCodes.NOT_FOUND) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        throw new AppError(
+            "Error Logging in user",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 module.exports = {
     createUser,
     verifyEmail,
+    loginUser,
 };

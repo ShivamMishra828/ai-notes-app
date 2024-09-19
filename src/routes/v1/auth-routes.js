@@ -10,5 +10,8 @@ router.post("/signup", AuthController.createUser);
 // Verify Email route
 router.post("/verify-email", AuthController.verifyEmail);
 
+// Login route
+router.post("/signin", AuthController.loginUser);
+
 // Export the authentication routes
 module.exports = router;
