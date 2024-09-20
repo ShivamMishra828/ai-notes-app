@@ -232,7 +232,7 @@ async function resetPassword(data) {
         const response = await Mailer.sendMail({
             receiverInfo: user.email,
             subject: "Password Reset Successfully",
-            body: ResetMail.resetPasswordSuccessTemplate,
+            body: ResetMail.resetPasswordSuccessTemplate(),
         });
         if (!response) {
             throw new AppError(
