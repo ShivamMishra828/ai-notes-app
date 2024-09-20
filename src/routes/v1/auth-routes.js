@@ -17,5 +17,11 @@ router.post("/signin", AuthController.loginUser);
 // Logout route
 router.get("/logout", AuthMiddleware.verifyJwtToken, AuthController.logoutUser);
 
+// Forget Password route
+router.post("/forgot-password", AuthController.forgotPassword);
+
+// Reset Password route
+router.post("/reset-password/:resetToken", AuthController.resetPassword);
+
 // Export the authentication routes
 module.exports = router;

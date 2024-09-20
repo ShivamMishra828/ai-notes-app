@@ -6,7 +6,9 @@ const {
     Mailer,
     GenerateJWTToken,
 } = require("../utils/common");
-const { VerificationMail, SuccessMail } = require("../templates");
+const { VerificationMail, SuccessMail, ResetMail } = require("../templates");
+const uuid = require("uuid").v4;
+const { ServerConfig } = require("../config");
 
 const userRepository = new UserRepository();
 
@@ -159,8 +161,101 @@ async function loginUser(data) {
     }
 }
 
+async function forgotPassword(data) {
+    try {
+        const user = await userRepository.findOne({ email: data.email });
+        if (!user) {
+            throw new AppError("User not found", StatusCodes.NOT_FOUND);
+        }
+
+        const resetToken = uuid();
+        const resetURL = `${ServerConfig.CLIENT_URL}/reset-password/${resetToken}`;
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpiresAt = Date.now() + 10 * 60 * 1000;
+        await user.save();
+
+        const response = await Mailer.sendMail({
+            receiverInfo: data.email,
+            subject: "Reset Your Password",
+            body: ResetMail.resetPasswordTemplate(resetURL),
+        });
+        if (!response) {
+            throw new AppError(
+                "Can't send reset password mail",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+    } catch (error) {
+        if (error.statusCode === StatusCodes.BAD_REQUEST) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        if (error.statusCode === StatusCodes.NOT_FOUND) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        throw new AppError(
+            "Something went wrong while forgotting the password",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
+async function resetPassword(data) {
+    try {
+        if (data.newPassword !== data.confirmNewPassword) {
+            throw new AppError(
+                "New Password and Confirm new password must be same",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        const user = await userRepository.findOne({
+            resetPasswordToken: data.resetToken,
+            resetPasswordExpiresAt: {
+                $gt: Date.now(),
+            },
+        });
+        if (!user) {
+            throw new AppError(
+                "Invalid or expired reset token",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+
+        user.password = data.newPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+
+        const response = await Mailer.sendMail({
+            receiverInfo: user.email,
+            subject: "Password Reset Successfully",
+            body: ResetMail.resetPasswordSuccessTemplate,
+        });
+        if (!response) {
+            throw new AppError(
+                "Can't send reset password success mail",
+                StatusCodes.BAD_REQUEST
+            );
+        }
+    } catch (error) {
+        if (error.statusCode === StatusCodes.BAD_REQUEST) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        throw new AppError(
+            "Something went wrong while resetting user password",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 module.exports = {
     createUser,
     verifyEmail,
     loginUser,
+    forgotPassword,
+    resetPassword,
 };

@@ -15,4 +15,7 @@ module.exports = {
 
     // JWT Secret Key
     JWT_SECRET: process.env.JWT_SECRET,
+
+    // Client URL
+    CLIENT_URL: process.env.CLIENT_URL,
 };
