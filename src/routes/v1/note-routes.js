@@ -11,5 +11,8 @@ router.use(AuthMiddleware.verifyJwtToken);
 // Create Note route
 router.post("/", NoteController.createNote);
 
+// Fetch Note By Id route
+router.get("/:noteId", NoteController.fetchNoteById);
+
 // Export the authentication routes
 module.exports = router;

@@ -45,7 +45,6 @@ async function createUser(data) {
 
         return user;
     } catch (error) {
-        console.log(error);
         if (error.statusCode === StatusCodes.BAD_REQUEST) {
             throw new AppError(error.explanation, error.statusCode);
         }

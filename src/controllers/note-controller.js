@@ -34,6 +34,23 @@ async function createNote(req, res) {
     }
 }
 
+async function fetchNoteById(req, res) {
+    try {
+        const note = await NoteService.fetchNoteById({
+            id: req.params.noteId,
+            userId: req.userId,
+        });
+        return res
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse(note, "Successfully fetched note by id"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(new ErrorResponse(error));
+    }
+}
+
 module.exports = {
     createNote,
+    fetchNoteById,
 };
