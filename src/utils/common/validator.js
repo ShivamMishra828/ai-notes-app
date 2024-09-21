@@ -1,4 +1,6 @@
 const { z } = require("zod");
+const { WORK, PERSONAL, IDEAS } = require("../../constants").CATEGORY_OPTIONS;
+const mongoose = require("mongoose");
 
 const userSchemaValidator = z.object({
     email: z
@@ -61,9 +63,30 @@ const resetPasswordValidation = z.object({
     resetToken: z.string().min(1, { message: "Reset Token is required" }),
 });
 
+const noteSchemaValidator = z.object({
+    title: z
+        .string()
+        .trim()
+        .min(1, { message: "Title is required" })
+        .max(100, { message: "Title must be at most 100 characters" }),
+    content: z.string().min(1, { message: "Content is required" }),
+    userId: z
+        .string()
+        .refine((value) => mongoose.Types.ObjectId.isValid(value), {
+            message: "Invalid ObjectId",
+        }),
+    category: z
+        .string()
+        .optional()
+        .refine((value) => [WORK, PERSONAL, IDEAS].includes(value), {
+            message: "Invalid category",
+        }),
+});
+
 module.exports = {
     userSchemaValidator,
     verifyUserValidation,
     forgetPasswordValidation,
     resetPasswordValidation,
+    noteSchemaValidator,
 };

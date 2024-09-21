@@ -21,7 +21,6 @@ const noteSchema = new mongoose.Schema(
             type: String,
             enum: [WORK, PERSONAL, IDEAS],
         },
-        tags: [String],
     },
     { timestamps: true }
 );
