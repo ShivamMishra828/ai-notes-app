@@ -39,7 +39,20 @@ async function fetchNoteById(data) {
     }
 }
 
+async function fetchAllNotes(data) {
+    try {
+        const notes = await noteRepository.findAll({ userId: data.userId });
+        return notes;
+    } catch (error) {
+        throw new AppError(
+            "Error fetching all notes",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 module.exports = {
     createNote,
     fetchNoteById,
+    fetchAllNotes,
 };

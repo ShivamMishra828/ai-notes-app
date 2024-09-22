@@ -50,7 +50,23 @@ async function fetchNoteById(req, res) {
     }
 }
 
+async function fetchAllNotes(req, res) {
+    try {
+        const notes = await NoteService.fetchAllNotes({
+            userId: req.userId,
+        });
+        return res
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse(notes, "Notes fetched successfully"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(new ErrorResponse(error));
+    }
+}
+
 module.exports = {
     createNote,
     fetchNoteById,
+    fetchAllNotes,
 };

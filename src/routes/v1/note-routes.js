@@ -14,5 +14,8 @@ router.post("/", NoteController.createNote);
 // Fetch Note By Id route
 router.get("/:noteId", NoteController.fetchNoteById);
 
+// Fetch All Notes route
+router.get("/", NoteController.fetchAllNotes);
+
 // Export the authentication routes
 module.exports = router;
