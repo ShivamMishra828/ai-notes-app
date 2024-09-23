@@ -17,5 +17,11 @@ router.get("/:noteId", NoteController.fetchNoteById);
 // Fetch All Notes route
 router.get("/", NoteController.fetchAllNotes);
 
+// Update Note route
+router.patch("/:noteId", NoteController.updateNote);
+
+// Delete Note route
+router.delete("/:noteId", NoteController.deleteNote);
+
 // Export the authentication routes
 module.exports = router;

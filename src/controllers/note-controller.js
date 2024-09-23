@@ -65,8 +65,44 @@ async function fetchAllNotes(req, res) {
     }
 }
 
+async function updateNote(req, res) {
+    try {
+        const note = await NoteService.updateNote({
+            ...req.body,
+            userId: req.userId,
+            noteId: req.params.noteId,
+        });
+        return res
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse(note, "Note updated successfully"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(new ErrorResponse(error));
+    }
+}
+
+async function deleteNote(req, res) {
+    try {
+        const response = await NoteService.deleteNote({
+            id: req.params.noteId,
+            userId: req.userId,
+        });
+
+        return res
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse(response, "Note deleted successfully"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(new ErrorResponse(error));
+    }
+}
+
 module.exports = {
     createNote,
     fetchNoteById,
     fetchAllNotes,
+    updateNote,
+    deleteNote,
 };
