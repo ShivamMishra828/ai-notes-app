@@ -6,4 +6,5 @@ module.exports = {
     Mailer: require("./mail-sender"),
     GenerateJWTToken: require("./generate-jwt-token"),
     Auth: require("./auth"),
+    Gemini: require("./gemini"),
 };

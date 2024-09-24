@@ -18,4 +18,10 @@ module.exports = {
 
     // Client URL
     CLIENT_URL: process.env.CLIENT_URL,
+
+    // PINECONE API KEY
+    PINECONE_API_KEY: process.env.PINECONE_API_KEY,
+
+    // GEMINI API KEY
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
 };
