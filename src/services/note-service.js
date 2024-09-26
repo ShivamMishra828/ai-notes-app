@@ -165,10 +165,71 @@ async function getEmbeddingForNote(data) {
     return Gemini.getEmbedding(data.title + "\n\n" + data.content ?? "");
 }
 
+async function chatRoute(data) {
+    try {
+        const messageEmbedding = await getEmbeddingForNote({
+            title: "Query",
+            content: data.message,
+        });
+
+        const searchResult = await notesIndex.query({
+            topK: 1,
+            vector: messageEmbedding,
+            filter: { userId: data.userId },
+        });
+
+        if (!searchResult.matches.length) {
+            throw new AppError(
+                "No relevant notes found",
+                StatusCodes.NOT_FOUND
+            );
+        }
+
+        const bestMatch = searchResult.matches[0];
+        const noteId = bestMatch.id;
+
+        const note = await noteRepository.findOne({
+            _id: noteId,
+            userId: data.userId,
+        });
+
+        if (!note) {
+            throw new AppError(
+                "Matching note not found in the database",
+                StatusCodes.NOT_FOUND
+            );
+        }
+
+        const prompt = `You are an assistant helping the user retrieve information from their notes. The user's note is titled "${note.title}" and contains the following information: "${note.content}". The user asked: "${data.message}". Provide a friendly and detailed response based on this information.`;
+
+        const aiResponse = await Gemini.model.generateContent(prompt);
+
+        if (!aiResponse.response) {
+            throw new AppError(
+                "Ai failed to generate a response",
+                StatusCodes.INTERNAL_SERVER_ERROR
+            );
+        }
+
+        return aiResponse.response.text();
+    } catch (error) {
+        console.log(error);
+        if (error.statusCode === StatusCodes.NOT_FOUND) {
+            throw new AppError(error.explanation, error.statusCode);
+        }
+
+        throw new AppError(
+            "Error in chat route",
+            StatusCodes.INTERNAL_SERVER_ERROR
+        );
+    }
+}
+
 module.exports = {
     createNote,
     fetchNoteById,
     fetchAllNotes,
     updateNote,
     deleteNote,
+    chatRoute,
 };

@@ -23,5 +23,8 @@ router.patch("/:noteId", NoteController.updateNote);
 // Delete Note route
 router.delete("/:noteId", NoteController.deleteNote);
 
+// Chat route
+router.post("/chat", NoteController.chatRoute);
+
 // Export the authentication routes
 module.exports = router;

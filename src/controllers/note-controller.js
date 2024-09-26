@@ -99,10 +99,28 @@ async function deleteNote(req, res) {
     }
 }
 
+async function chatRoute(req, res) {
+    try {
+        const response = await NoteService.chatRoute({
+            message: req.body.message,
+            userId: req.userId,
+        });
+
+        return res
+            .status(StatusCodes.OK)
+            .json(new SuccessResponse(response, "Response Generated"));
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json(new ErrorResponse(error));
+    }
+}
+
 module.exports = {
     createNote,
     fetchNoteById,
     fetchAllNotes,
     updateNote,
     deleteNote,
+    chatRoute,
 };
