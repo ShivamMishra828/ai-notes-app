@@ -1,7 +1,3 @@
-Here's an updated version of the README file that includes Pinecone:
-README.md
-MarkDown
-
 # Note-Taker API
 
 A RESTful API for creating, managing, and categorizing notes using cutting-edge AI technologies.
