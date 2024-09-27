@@ -33,6 +33,7 @@ app.get("/", (req, res) => {
     res.send("Server is Up and Running Smoothly!");
 });
 
+// API routes
 app.use("/api", apiRoutes);
 
 // Exporting the express app instance

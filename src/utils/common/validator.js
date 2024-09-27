@@ -1,7 +1,14 @@
+/**
+ * Validator module.
+ * Provides functions for validating user input using Zod.
+ * @module Validator
+ */
+
 const { z } = require("zod");
 const { WORK, PERSONAL, IDEAS } = require("../../constants").CATEGORY_OPTIONS;
 const mongoose = require("mongoose");
 
+// Define user schema validator
 const userSchemaValidator = z.object({
     email: z
         .string()
@@ -19,6 +26,7 @@ const userSchemaValidator = z.object({
         ),
 });
 
+// Define verify user validation schema
 const verifyUserValidation = z.object({
     email: z
         .string()
@@ -30,6 +38,7 @@ const verifyUserValidation = z.object({
         .regex(/^[0-9]+$/, "OTP must contain only numbers"),
 });
 
+// Define forget password validation schema
 const forgetPasswordValidation = z.object({
     email: z
         .string()
@@ -37,6 +46,7 @@ const forgetPasswordValidation = z.object({
         .min(1, { message: "Email is required" }),
 });
 
+// Define reset password validation schema
 const resetPasswordValidation = z.object({
     newPassword: z
         .string()
@@ -63,6 +73,7 @@ const resetPasswordValidation = z.object({
     resetToken: z.string().min(1, { message: "Reset Token is required" }),
 });
 
+// Define note schema validator
 const noteSchemaValidator = z.object({
     title: z
         .string()
@@ -83,6 +94,7 @@ const noteSchemaValidator = z.object({
         }),
 });
 
+// Export validation schemas
 module.exports = {
     userSchemaValidator,
     verifyUserValidation,
