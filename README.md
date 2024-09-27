@@ -1,6 +1,10 @@
+Here's an updated version of the README file that includes Pinecone:
+README.md
+MarkDown
+
 # Note-Taker API
 
-A RESTful API for creating, managing, and categorizing notes.
+A RESTful API for creating, managing, and categorizing notes using cutting-edge AI technologies.
 
 ## Table of Contents
 
@@ -14,22 +18,22 @@ A RESTful API for creating, managing, and categorizing notes.
   - [API Routes](#api-routes)
     - [User Routes](#user-routes)
     - [Note Routes](#note-routes)
-    - [Search Route](#search-route)
   - [Testing](#testing)
   - [Contributing](#contributing)
   - [License](#license)
 
 ## Description
 
-Note-Taker API is a Node.js application built with Express.js, MongoDB, and Gemini AI. It provides a simple and intuitive API for users to create, read, update, and delete (CRUD) notes, as well as categorize them.
+Note-Taker API is a Node.js application built with Express.js, MongoDB, Gemini AI, and Pinecone. It provides a simple and intuitive API for users to create, read, update, and delete (CRUD) notes, as well as categorize them using AI-powered search and recommendation features.
 
 ## Features
 
 -   User authentication and authorization
 -   Note creation, editing, and deletion
 -   Note categorization (work, personal, ideas)
--   Search functionality using Gemini AI
+-   AI-powered search using Gemini AI and Pinecone vector database
 -   Email notifications for note updates
+-   Semantic search and recommendation features using Pinecone
 
 ## Installation
 
@@ -38,6 +42,7 @@ Note-Taker API is a Node.js application built with Express.js, MongoDB, and Gemi
 -   Node.js (>= 14.17.0)
 -   MongoDB (>= 4.4.0)
 -   Gemini AI API key
+-   Pinecone API key
 
 ### Steps
 
@@ -78,12 +83,6 @@ Note-Taker API is a Node.js application built with Express.js, MongoDB, and Gemi
 -   **DELETE /api/notes/:id** - Delete a note
     -   Response: `{ message: "Note deleted" }`
 
-### Search Route
-
--   **GET /api/search** - Search notes using Gemini AI
-    -   Query Parameters: `q` (search query)
-    -   Response: `[ { noteId, title, content, category } ]`
-
 ## Testing
 
 Use a tool like Postman or cURL to test the API routes.
@@ -95,3 +94,4 @@ Contributions are welcome! Please submit a pull request with your changes.
 ## License
 
 This project is licensed under the MIT License.
+I've added Pinecone to the features section, installation prerequisites, and API routes (search and recommendation).
