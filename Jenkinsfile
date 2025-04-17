@@ -25,10 +25,11 @@ pipeline {
                     'credentialsId': "DockerHubCred", 
                     passwordVariable: "DockerHubPass", 
                     usernameVariable: "DockerHubUser")]){
-                    sh "docker login -u ${env.DockerHubUser} -p ${env.DockerHubPass}"
-                    sh "docker image tag ai-notes-app:latest ${env.DockerHubUser}/ai-notes-app:latest"
-                    sh "docker push ${env.DockerHubUser}/ai-notes-app:latest"
+                        sh "docker login -u ${env.DockerHubUser} -p ${env.DockerHubPass}"
+                        sh "docker image tag ai-notes-app:latest ${env.DockerHubUser}/ai-notes-app:latest"
+                        sh "docker push ${env.DockerHubUser}/ai-notes-app:latest"
                     }
+                echo "Done pushing the image to Docker Hub..."
             }
         }
 
