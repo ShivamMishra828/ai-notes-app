@@ -4,19 +4,24 @@ A RESTful API for creating, managing, and categorizing notes using cutting-edge 
 
 ## Table of Contents
 
-- [Note-Taker API](#note-taker-api)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Features](#features)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Steps](#steps)
-  - [API Routes](#api-routes)
-    - [User Routes](#user-routes)
-    - [Note Routes](#note-routes)
-  - [Testing](#testing)
-  - [Contributing](#contributing)
-  - [License](#license)
+-   [Note-Taker API](#note-taker-api)
+    -   [Table of Contents](#table-of-contents)
+    -   [Description](#description)
+    -   [Features](#features)
+    -   [Installation](#installation)
+        -   [Prerequisites](#prerequisites)
+        -   [Steps](#steps)
+    -   [API Routes](#api-routes)
+        -   [User Routes](#user-routes)
+        -   [Note Routes](#note-routes)
+    -   [CI/CD Pipeline](#cicd-pipeline)
+        -   [Pipeline Overview](#pipeline-overview)
+        -   [Deployment Details](#deployment-details)
+        -   [Jenkinsfile](#jenkinsfile)
+        -   [Prerequisites](#prerequisites-1)
+    -   [Testing](#testing)
+    -   [Contributing](#contributing)
+    -   [License](#license)
 
 ## Description
 
@@ -78,6 +83,37 @@ Note-Taker API is a Node.js application built with Express.js, MongoDB, Gemini A
     -   Response: `{ noteId, title, content, category }`
 -   **DELETE /api/notes/:id** - Delete a note
     -   Response: `{ message: "Note deleted" }`
+
+## CI/CD Pipeline
+
+This project utilizes a Jenkins-based CI/CD pipeline to automate the processes of building, testing, and deploying the application.
+
+### Pipeline Overview
+
+The CI/CD pipeline is triggered automatically upon any push or merge to the `main` branch, facilitated by a GitHub webhook. The pipeline comprises the following stages:
+
+1. **Code Checkout**: Retrieves the latest code from the GitHub repository.
+2. **Docker Image Build**: Constructs a Docker image from the updated codebase.
+3. **Docker Image Push**: Tags and pushes the Docker image to Docker Hub under the repository `shivammishra828/ai-notes-app`.
+4. **Deployment**: Deploys the application using Docker Compose on the Jenkins agent node.
+
+### Deployment Details
+
+-   **Dockerfile**: Defines the application's environment and dependencies.
+-   **docker-compose.yml**: Specifies the services, ports, and environment variables required for the application to run.
+-   **Environment Variables**: Managed via a `.env` file, which should be created based on the provided `.env.example`.
+
+### Jenkinsfile
+
+The `Jenkinsfile` outlines the pipeline stages and is located at the root of the repository.
+
+### Prerequisites
+
+Ensure the following are set up for the CI/CD pipeline to function correctly:
+
+-   **Jenkins Agent Node**: Configured with Docker and Docker Compose installed.
+-   **Docker Hub Credentials**: Stored securely in Jenkins credentials as `DockerHubCred`.
+-   **GitHub Webhook**: Configured to trigger the Jenkins pipeline on code changes.
 
 ## Testing
 
