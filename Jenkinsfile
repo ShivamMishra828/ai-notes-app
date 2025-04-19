@@ -30,7 +30,7 @@ pipeline {
         stage("Deploying the code to EC2") {
             steps {
                 echo "Deploying the code with the help of docker..."
-                sh "docker compose up -d"
+                sh "docker compose down && docker compose up -d"
             }
         }
     }
