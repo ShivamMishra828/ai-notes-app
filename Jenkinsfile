@@ -1,35 +1,29 @@
+@Library("Shared") _
 pipeline {
     agent {label "aws-ec2-ubuntu-agent-1"}
 
     stages {
         stage("Pulling the Code") {
             steps {
-                echo "Pulling the code from Github..."
-                git url: "https://github.com/ShivamMishra828/ai-notes-app.git", branch: "main"
-                echo "Pulled code from Github successfully..."
+                script {
+                    clone("https://github.com/ShivamMishra828/ai-notes-app.git", "main")
+                }
             }
         }
 
         stage("Building the Code") {
             steps {
-                echo "Building the code into Docker Image..."
-                sh "docker build -t ai-notes-app:latest ."
-                echo "Builed the code successfully..."
+                script {
+                    docker_build("ai-notes-app", "latest")
+                }
             }
         }
 
         stage("Pushing the image to Docker Hub") {
             steps {
-                echo "Pushing the image to Docker Hub..."
-                withCredentials([usernamePassword(
-                    'credentialsId': "DockerHubCred", 
-                    passwordVariable: "DockerHubPass", 
-                    usernameVariable: "DockerHubUser")]){
-                        sh "docker login -u ${env.DockerHubUser} -p ${env.DockerHubPass}"
-                        sh "docker image tag ai-notes-app:latest ${env.DockerHubUser}/ai-notes-app:latest"
-                        sh "docker push ${env.DockerHubUser}/ai-notes-app:latest"
-                    }
-                echo "Done pushing the image to Docker Hub..."
+                script {
+                    docker_push("ai-notes-app", "latest")
+                }
             }
         }
 
